@@ -27,8 +27,9 @@
             <!-- Temperature Trend Chart -->
             <div class="chart-card chart-card-large">
                 <div class="chart-header">
-                    <h3>Temperature Trend</h3>
-                    <p class="chart-subtitle">Last 24 Hours</p>
+                    <h3>Temperature Trend <span id="chart-city-name" style="font-size: 0.8em; color: #FFD700;"></span>
+                    </h3>
+                    <p class="chart-subtitle">Last few updates</p>
                 </div>
                 <canvas id="temperatureChart"></canvas>
             </div>
@@ -51,37 +52,7 @@
                 <canvas id="humidityWindChart"></canvas>
             </div>
 
-            <!-- UV Index Card -->
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <span class="material-symbols-outlined">wb_sunny</span>
-                </div>
-                <div class="stat-content">
-                    <h4>UV Index</h4>
-                    <div class="stat-value" id="uvIndex">7</div>
-                    <div class="stat-label">High</div>
-                    <div class="stat-bar">
-                        <div class="stat-bar-fill"
-                            style="width: 70%; background: linear-gradient(90deg, #FFD700, #FF8C00);"></div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Air Quality Card -->
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <span class="material-symbols-outlined">air</span>
-                </div>
-                <div class="stat-content">
-                    <h4>Air Quality</h4>
-                    <div class="stat-value" id="aqiValue">42</div>
-                    <div class="stat-label">Good</div>
-                    <div class="stat-bar">
-                        <div class="stat-bar-fill"
-                            style="width: 42%; background: linear-gradient(90deg, #4CAF50, #8BC34A);"></div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <script src="chart.js"></script>

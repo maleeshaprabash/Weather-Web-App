@@ -93,6 +93,8 @@ async function fetchWeatherByCity(city) {
         const data = await response.json();
         console.log('✅ Weather data received:', data);
         updateCurrentWeather(data);
+        saveWeatherToBackend(data); // Save to backend
+        localStorage.setItem('lastCity', city); // Save to local storage
         fetchForecast(city);
     } catch (error) {
         displayError(error.message);
@@ -122,6 +124,7 @@ async function fetchWeatherByCoords(lat, lon) {
         const data = await response.json();
         console.log('✅ Weather data (coords):', data);
         updateCurrentWeather(data);
+        saveWeatherToBackend(data); // Save to backend
         fetchForecastByCoords(lat, lon);
     } catch (error) {
         displayError(error.message);
@@ -217,6 +220,59 @@ function getCurrentLocation() {
     }
 }
 
+async function saveWeatherToBackend(weatherData) {
+    console.log('💾 Start saving to backend...');
+    console.log('📤 Payload:', {
+        city: weatherData.name,
+        country: weatherData.sys.country,
+        temperature: weatherData.main.temp,
+        humidity: weatherData.main.humidity,
+        windSpeed: weatherData.wind.speed,
+        condition: weatherData.weather[0].main,
+        description: weatherData.weather[0].description,
+        coordinates: {
+            lat: weatherData.coord.lat,
+            lon: weatherData.coord.lon
+        }
+    });
+
+    try {
+        const response = await fetch('http://localhost:3000/api/weather', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                city: weatherData.name,
+                country: weatherData.sys.country,
+                temperature: weatherData.main.temp,
+                humidity: weatherData.main.humidity,
+                windSpeed: weatherData.wind.speed,
+                condition: weatherData.weather[0].main,
+                description: weatherData.weather[0].description,
+                coordinates: {
+                    lat: weatherData.coord.lat,
+                    lon: weatherData.coord.lon
+                }
+            })
+        });
+
+        console.log('📡 Response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server responded with ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('✅ Weather saved to backend:', result);
+        // Alert removed for better UX
+    } catch (error) {
+        console.error('❌ Error saving to backend:', error);
+        alert('Failed to save data to database: ' + error.message);
+    }
+}
+
 // Search button click
 searchBtn.addEventListener('click', () => {
     const city = cityInput.value;
@@ -239,5 +295,13 @@ window.addEventListener('load', () => {
     }
 
     console.log('🌤️ Weather app initialized');
-    getCurrentLocation();
+
+    // Check for saved city
+    const lastCity = localStorage.getItem('lastCity');
+    if (lastCity) {
+        console.log('↻ Loading last searched city:', lastCity);
+        fetchWeatherByCity(lastCity);
+    } else {
+        getCurrentLocation();
+    }
 });
